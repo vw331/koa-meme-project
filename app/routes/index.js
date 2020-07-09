@@ -1,8 +1,12 @@
 const Router = require('koa-router');
-const router = new Router();
+const users = require('./users')
+const home = require('./home')
 
-router.get('/', (ctx, next) => {
-  ctx.body = 'hello world ss'
-})
+const v1 = new Router({
+  prefix: '/api/v1'
+});
 
-module.exports = router;
+v1.use(users.routes())
+v1.use(home.routes())
+
+module.exports = v1;

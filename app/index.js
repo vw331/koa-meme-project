@@ -13,13 +13,19 @@ const app = new koa();
 
 mongoose.connect(connectionStr, { 
   useNewUrlParser: true,
-  useUnifiedTopology: true 
+  useUnifiedTopology: true,
+  useFindAndModify: false
 }, () => {
   console.log('mongoDB 连接成功')
 })
 mongoose.connection.on('error', console.error)
 
 app.use(koaStatic(path.join(__dirname, 'public')))
+
+app.use(error({
+  postFormat: (e, { stack, ...rest }) => process.env.NODE_ENV === 'production' ? reset: { stack, ...rest } 
+}))
+
 app.use(koaBody({
   multipart: true,
   formidable: {
@@ -27,7 +33,9 @@ app.use(koaBody({
     keepExtensions: true
   }
 }))
+
 app.use(parameter(app))
+
 app.use(routes.routes())
   .use(routes.allowedMethods())
 

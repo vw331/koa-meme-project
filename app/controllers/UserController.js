@@ -10,7 +10,9 @@ class UserController {
   }
 
   async findById(ctx) {
-    const user = await User.findById(ctx.params.id)
+    const { fields } = ctx.query
+    const selectFields = ['educations', 'employments', 'business', 'locations'].map(f => ' +'+f).join('')
+    const user = await User.findById(ctx.params.id).select(selectFields)
     if(!user) {
       ctx.throw(404, '用户不存在')
     }
@@ -74,6 +76,53 @@ class UserController {
     ctx.body = { token }
   }
 
+  /**
+   * 获取关注者
+   * @ params {id: String}
+   */
+  async listFollowing(ctx) {
+    const user = await User.findById(ctx.params.id).select('+following').populate('following')
+    if(!user) {
+      ctx.throw(404, '用户不存在')
+    }
+    ctx.body = user.following
+  }
+
+  /**
+   *  获取粉丝
+   *  @params {id: String}
+   */
+  async listFollowers(ctx) {
+    const users = await User.find({ following: ctx.params.id })
+    ctx.body = users
+  }
+
+  /**
+   * 关注
+   * @param {*} ctx 
+   */
+  async follow(ctx) {
+    const me = await User.findById(ctx.state.user.id).select('+following')
+    if(!me.following.map(id => id.toString()).includes(ctx.params.id)) {
+      me.following.push(ctx.params.id)
+      me.save()
+    }
+    ctx.status = 204
+  }
+
+  /**
+   * 取消关系
+   * @param {*}} ctx 
+   */
+  async unfollow(ctx) {
+    const me = await User.findById(ctx.state.user.id).select('+following')
+    const index = me.following.map(id => id.toString).indexOf(ctx.params.id)
+    if(index > -1) {
+      me.following.splice(index, 1)
+      me.save()
+    }
+    ctx.status = 204
+  }
 }
 
 module.exports = new UserController()

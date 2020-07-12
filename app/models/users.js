@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose')
+const topics = require('./topics')
 
 const userSchema = new Schema({
   __v: { type: Number, select: false },
@@ -7,19 +8,19 @@ const userSchema = new Schema({
   avatar_url: { type: String },
   gender: { type: String, enum: ['male', 'female'], default: 'male', required: true, select: false },
   headline: { type: String },
-  locations: { type: [{ type: String }], select: false },
-  business: { type: String, select: false},
+  locations: { type: [{ type: Schema.Types.ObjectId, ref: 'Topic' }], select: false },
+  business: { type: Schema.Types.ObjectId, ref: 'Topic', select: false},
   employments: { 
     type: [{
-      company: { type: String },
-      job: { type: String },
+      company: { type: Schema.Types.ObjectId, ref: 'Topic' },
+      job: { type: Schema.Types.ObjectId, ref: 'Topic' },
     }], 
     select: false
   },
   educations: {
     type: [{
-      school: { type: String },
-      major: { type: String },
+      school: { type: Schema.Types.ObjectId, ref: 'Topic' },
+      major: { type: Schema.Types.ObjectId, ref: 'Topic' },
       diploma: { type: Number, enum: [1, 2, 3, 4, 5] },
       entrance_year: { type: Number },
       graduation_year: { type: Number }
@@ -29,8 +30,24 @@ const userSchema = new Schema({
   following: {
     type: [{ type: Schema.Types.ObjectId, ref: 'User'}],
     select: false
+  },
+  followingTopics: {
+    type: [{ type: Schema.Types.ObjectId, ref: 'Topic'}],
+    select: false
+  },
+  likingAnswers: {
+    type: [{ type: Schema.Types.ObjectId, ref: 'Answer'}],
+    select: false
+  },
+  dislikingAnswers: {
+    type: [{ type: Schema.Types.ObjectId, ref: 'Answer'}],
+    select: false
+  },
+  collectingAnswers: {
+    type: [{ type: Schema.Types.ObjectId, ref: 'Answer'}],
+    select: false
   }
-})
+}, { timestamps: true })
 
 module.exports = model('User', userSchema)
 

@@ -23,7 +23,7 @@ mongoose.connection.on('error', console.error)
 app.use(koaStatic(path.join(__dirname, 'public')))
 
 app.use(error({
-  postFormat: (e, { stack, ...rest }) => process.env.NODE_ENV === 'production' ? reset: { stack, ...rest } 
+  postFormat: (e, { stack, ...rest }) => process.env.NODE_ENV === 'production' ? rest: { stack, ...rest } 
 }))
 
 app.use(koaBody({

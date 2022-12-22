@@ -22,7 +22,7 @@
   "homepage": "https://github.com/vw331/koa-meme-project#readme",
   "dependencies": {
     "cross-env": "^7.0.2",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "koa": "^2.13.0",
     "koa-body": "^4.2.0",
     "koa-bodyparser": "^4.3.0",
